@@ -1,14 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image to PDF Converter</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>PDF Text Editor</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: #121212;
+    }
+    #viewer {
+      height: 100vh;
+      width: 100vw;
+    }
+  </style>
 </head>
 <body>
-  <h1>Image to PDF Converter</h1>
-  <p>This is a placeholder. Replace this with the real HTML content.</p>
-  <script src="script.js"></script>
+  <div id="viewer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@pdftron/webviewer/public/core/webviewer.min.js"></script>
+  <script>
+    WebViewer({
+      path: 'https://cdn.jsdelivr.net/npm/@pdftron/webviewer/public', // Path to PDFTron
+      initialDoc: '', // You can load a PDF here, or let user open one
+      licenseKey: '', // Add your trial key from PDFTron (optional for demo)
+      enableTextEditing: true,
+    }, document.getElementById('viewer')).then(instance => {
+      const { UI, Core } = instance;
+
+      // Optional: Enable file upload
+      UI.setHeaderItems(header => {
+        header.push({
+          type: 'actionButton',
+          img: 'https://img.icons8.com/material-rounded/24/upload.png',
+          onClick: () => {
+            UI.openElements(['filePickerModal']);
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
