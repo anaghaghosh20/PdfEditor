@@ -19,12 +19,13 @@
 <body>
   <div id="viewer"></div>
 
-  <script src="https://unpkg.com/@pdftron/webviewer"></script>
+  <!-- Use the correct CDN for PDFTron WebViewer -->
+  <script src="https://unpkg.com/@pdftron/webviewer@8.0.0/web/webviewer.min.js"></script>
   <script>
     WebViewer({
-      path: 'https://unpkg.com/@pdftron/webviewer@8.0.0/web/',  // Make sure path is correct
-      initialDoc: 'https://www.pdftron.com/downloads/pl/legal.pdf',  // Provide a valid PDF URL
-      licenseKey: 'your-license-key-here',  // If you don't have one, you can leave it empty for a trial
+      path: 'https://unpkg.com/@pdftron/webviewer@8.0.0/web/',  // Path to the correct WebViewer resources
+      initialDoc: 'https://www.pdftron.com/downloads/pl/legal.pdf',  // Sample PDF URL (replace with your own)
+      licenseKey: '',  // Leave empty or provide your trial key
       enableTextEditing: true,
     }, document.getElementById('viewer')).then(instance => {
       const { UI, Core } = instance;
