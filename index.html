@@ -1,46 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>PDF Text Editor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editable PDF Text Tool</title>
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      overflow: hidden;
+    body {
       background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
     }
-    #viewer {
-      height: 100vh;
-      width: 100vw;
+    .container {
+      padding: 20px;
+    }
+    #editor {
+      height: 500px;
+      background-color: white;
+      color: black;
+    }
+    .button-group {
+      margin-top: 10px;
+    }
+    input[type="file"] {
+      margin-bottom: 10px;
+    }
+    .live-ticker {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #000;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .live-ticker span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scroll-left 20s linear infinite;
+    }
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
     }
   </style>
 </head>
 <body>
-  <div id="viewer"></div>
-
-  <!-- Use the correct CDN for PDFTron WebViewer -->
-  <script src="https://unpkg.com/@pdftron/webviewer@8.0.0/web/webviewer.min.js"></script>
-  <script>
-    WebViewer({
-      path: 'https://unpkg.com/@pdftron/webviewer@8.0.0/web/',  // Path to the correct WebViewer resources
-      initialDoc: 'https://www.pdftron.com/downloads/pl/legal.pdf',  // Sample PDF URL (replace with your own)
-      licenseKey: '',  // Leave empty or provide your trial key
-      enableTextEditing: true,
-    }, document.getElementById('viewer')).then(instance => {
-      const { UI, Core } = instance;
-
-      // Optional: Enable file upload button
-      UI.setHeaderItems(header => {
-        header.push({
-          type: 'actionButton',
-          img: 'https://img.icons8.com/material-rounded/24/upload.png',
-          onClick: () => {
-            UI.openElements(['filePickerModal']);
-          }
-        });
-      });
+  <div class="container">
+    <h2>PDF Text Editor</h2>
+    <input type="file" id="uploadPDF" accept="application/pdf">
+    <div id="editor"></div>
+    <div class="button-group">
+      <button onclick="downloadPDF()">Download as PDF</button>
+    </div>
+  </div>  <div class="live-ticker">
+    <span>We do not store or upload any data. All processing is done on your device.</span>
+  </div>  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>  <script>
+    const quill = new Quill('#editor', {
+      theme: 'snow'
     });
-  </script>
-</body>
+
+    document.getElementById('uploadPDF').addEventListener('change', async function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const typedarray = new Uint8Array(this.result);
+        const pdfDoc = await PDFLib.PDFDocument.load(typedarray);
+        let fullText = '';
+
+        const pages = pdfDoc.getPages();
+        for (let page of pages) {
+          const { width, height } = page.getSize();
+          const textContent = await page.getTextContent?.();
+        }
+
+        fullText = "PDF text extraction not supported in pdf-lib; use placeholder here.";
+
+        quill.setText(fullText || "Sorry! Text extraction not supported here.");
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    function downloadPDF() {
+      const element = document.createElement('div');
+      element.innerHTML = quill.root.innerHTML;
+      html2pdf().from(element).save('edited.pdf');
+    }
+  </script></body>
 </html>
